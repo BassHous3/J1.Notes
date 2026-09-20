@@ -109,6 +109,9 @@ All settings are passed as environment variables. Copy `.env.example` to `.env` 
 |---|---|---|
 | `PORT` | `3000` | HTTP port for the web app |
 | `JWT_SECRET` | *(insecure)* | **Required in production.** Secret for session tokens |
+| `LOGIN_MAX_ATTEMPTS` | `0` (off) | Max login attempts per window before lockout. `0` disables the limiter |
+| `LOGIN_LOCKOUT_MINUTES` | `5` | Window and lockout length in minutes |
+| `LOGIN_TRUST_PROXY` | `false` | `true` = limit per client IP using `CF-Connecting-IP` / `X-Forwarded-For`. Only enable behind a proxy or tunnel; otherwise all clients share one bucket |
 | `DATABASE_PROVIDER` | `sqlite` | `sqlite` or `postgresql` |
 | `DATABASE_URL` | `file:/data/j1notes.db` | Database connection string |
 | `COLLAB_PORT` | `1234` | Port for the collaboration WebSocket server |

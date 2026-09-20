@@ -13,6 +13,9 @@ services:
       - DATABASE_URL=file:/data/j1notes.db
       - JWT_SECRET=${JWT_SECRET:-CHANGE-ME-IN-PRODUCTION}
       - NODE_ENV=production
+      - LOGIN_MAX_ATTEMPTS=${LOGIN_MAX_ATTEMPTS:-0}
+      - LOGIN_LOCKOUT_MINUTES=${LOGIN_LOCKOUT_MINUTES:-5}
+      - LOGIN_TRUST_PROXY=${LOGIN_TRUST_PROXY:-false}
     volumes:
       - j1notes_data:/data
       - j1notes_uploads:/app/public/uploads
