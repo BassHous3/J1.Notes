@@ -12,6 +12,9 @@ services:
       - DATABASE_URL=file:/data/j1notes.db
       - JWT_SECRET=YOUR_RANDOM_SECRET_HERE   # from: openssl rand -hex 32
       - NODE_ENV=production
+      - LOGIN_MAX_ATTEMPTS=${LOGIN_MAX_ATTEMPTS:-0}
+      - LOGIN_LOCKOUT_MINUTES=${LOGIN_LOCKOUT_MINUTES:-5}
+      - LOGIN_TRUST_PROXY=${LOGIN_TRUST_PROXY:-false}
     volumes:
       - /DATA/AppData/j1notes/data:/data
       - /DATA/AppData/j1notes/uploads:/app/public/uploads

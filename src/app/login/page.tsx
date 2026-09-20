@@ -36,7 +36,7 @@ export default function LoginPage() {
     } else if (res.status === 429) {
       const data = await res.json().catch(() => ({}));
       const minutes = Math.max(1, Math.ceil((data.retryAfter ?? 60) / 60));
-      setError(t('login.tooManyAttempts', { minutes }));
+      setError(t('login.tooManyAttempts', 'Too many attempts. Please try again later.'));
       setInput('');
     } else {
       setError(authType === 'pin' ? t('login.wrongPin') : t('login.wrongPassword'));
