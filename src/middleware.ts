@@ -15,8 +15,20 @@ const PUBLIC_PATHS = [
   '/api/settings/auth',
 ];
 
+function denyAccess(request: NextRequest) {
+  // API-Aufrufe bekommen ein 401, Seiten werden zum Login geleitet
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  return NextResponse.redirect(new URL('/login', request.url));
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // /api/settings/auth: Lesen (GET) ist öffentlich, weil die Login-Seite es braucht.
+  // Schreiben (POST) läuft durch die normale Prüfung unten.
+  const isSettingsWrite = pathname.startsWith('/api/settings/auth') && request.method !== 'GET';
 
   // Statische Assets und öffentliche Pfade durchlassen
   if (
@@ -26,7 +38,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/manifest.json' ||
     pathname === '/sw.js' ||
     pathname === '/favicon.ico' ||
-    PUBLIC_PATHS.some(p => pathname.startsWith(p))
+    (PUBLIC_PATHS.some(p => pathname.startsWith(p)) && !isSettingsWrite)
   ) {
     return NextResponse.next();
   }
@@ -43,12 +55,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Kein oder ungültiges Token: Auth-Status prüfen via internal fetch
+  // Kein oder ungültiges Token: Auth-Status prüfen.
+  // Der Server fragt sich selbst über Loopback (nicht über die öffentliche URL, die
+  // hinter Docker/Tunnel/Access von innen oft nicht erreichbar ist).
   try {
-    const settingsUrl = new URL('/api/settings/auth', request.url);
-    const settingsRes = await fetch(settingsUrl.toString(), {
+    const port = process.env.PORT || request.nextUrl.port || '3000';
+    const settingsRes = await fetch(`http://127.0.0.1:${port}/api/settings/auth`, {
       headers: { 'x-middleware-check': '1' },
     });
+    if (!settingsRes.ok) throw new Error(`settings check failed: ${settingsRes.status}`);
     const settings = await settingsRes.json();
 
     if (!settings.auth_enabled) {
@@ -56,10 +71,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // Auth aktiviert aber kein gültiges Token → Login
-    return NextResponse.redirect(new URL('/login', request.url));
+    return denyAccess(request);
   } catch {
-    // Bei Fehler: durchlassen (fail-open für bessere UX)
-    return NextResponse.next();
+    // Bei Fehler: zugriff verweigern (fail-closed). Ein Fehler darf nie zu offenem Zugang führen.
+    return denyAccess(request);
   }
 }
 
