@@ -1,0 +1,30 @@
+name: j1notes
+
+services:
+  j1notes:
+    image: YOUR_IMAGE_LINK_HERE   # e.g. dockeruser/j1notes:latest
+    container_name: j1notes
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_PROVIDER=sqlite
+      - DATABASE_URL=file:/data/j1notes.db
+      - JWT_SECRET=YOUR_RANDOM_SECRET_HERE   # from: openssl rand -hex 32
+      - NODE_ENV=production
+    volumes:
+      - /DATA/AppData/j1notes/data:/data
+      - /DATA/AppData/j1notes/uploads:/app/public/uploads
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: j1notes
+  icon: https://raw.githubusercontent.com/x3kim/J1.Notes/73cce8320ecc81a59cf40fefbb1221fa6ec6549e/public/icons/icon.svg
+  title:
+    en_us: J1.Notes
+  description:
+    en_us: Self-hosted, privacy-first notes app.
+  port_map: "3000"
+  index: /12
