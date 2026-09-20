@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { SignJWT } from 'jose';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/db';
+import { beginLoginAttempt, clearLoginAttempts } from '@/lib/loginRateLimit';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'j1notes-secret-change-in-production');
 
@@ -14,10 +15,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Auth nicht aktiviert' }, { status: 400 });
     }
 
+    // Optional brute-force protection (LOGIN_MAX_ATTEMPTS / LOGIN_LOCKOUT_MINUTES)
+    const gate = beginLoginAttempt(request);
+    if (!gate.allowed) {
+      return NextResponse.json(
+        { error: 'Zu viele Versuche', code: 'RATE_LIMITED', retryAfter: gate.retryAfterSeconds },
+        { status: 429, headers: { 'Retry-After': String(gate.retryAfterSeconds) } },
+      );
+    }
+
     const isValid = await bcrypt.compare(password, settings.password_hash);
     if (!isValid) {
       return NextResponse.json({ error: 'Falsches Passwort' }, { status: 401 });
     }
+
+    clearLoginAttempts(request);
 
     const token = await new SignJWT({ authenticated: true })
       .setProtectedHeader({ alg: 'HS256' })
