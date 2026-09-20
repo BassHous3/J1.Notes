@@ -28,6 +28,7 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 
 | | Feature | Description |
 |---|---|---|
+| 🐳 | **Docker** | `basshous3/j1notes:latest`
 | ✏️ | **Rich text editor** | Bold, italic, underline, highlights, links, text color, alignment |
 | ✅ | **Checklists** | Collaborative to-do lists with live sync |
 | 👥 | **Live collaboration** | Multiple users edit the same note simultaneously — changes appear in real time |
@@ -43,7 +44,6 @@ J1.Notes is a self-hosted note-taking app inspired by Google Keep. It runs entir
 | 📱 | **PWA** | Install as a desktop or mobile app |
 | 🔒 | **App lock** | Optional password or PIN protection |
 | 📄 | **REST API** | Full OpenAPI 3 spec, Swagger UI at `/api/docs` |
-| 🐳 | **Docker-ready** | Single `docker compose up` deployment |
 | 🗄️ | **SQLite & PostgreSQL** | Choose your database backend |
 
 ## Quick Start
@@ -132,6 +132,7 @@ All settings are passed as environment variables. Copy `.env.example` to `.env` 
 | `SMTP_FROM` | `J1.Notes <no-reply@j1notes.local>` | From address |
 | `NEXT_PUBLIC_GITHUB_URL` | `https://github.com/x3kim/J1.Notes` | GitHub link in footer |
 
+## Configuration YML Example
 ```yaml
 name: j1notes
 services:
