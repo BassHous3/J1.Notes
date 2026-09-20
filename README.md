@@ -1,11 +1,19 @@
 <div align="center">
 
-<img src="images/logo.png" alt="J1.Notes Logo" width="100" />
+<img src="https://raw.githubusercontent.com/basshous3/J1.Notes/73cce8320ecc81a59cf40fefbb1221fa6ec6549e/public/icons/icon.svg" alt="J1.Notes Logo" width="100" />
 
 # J1.Notes
 
 **Self-hosted, privacy-first notes — your data, your server.**
 
+**This is a fork from the epic-one-for-all https://github.com/x3kim/J1.Notes.git**
+
+**This fork is intended to simplify installation with a single docker image and giving the possibility to expose the UI without comprimising security**
+**The plan is to eventually marge with the OG if such opportunity is available. It is important to know that this for is VIBECODED.**
+</div>
+
+<div align="center">
+  
 [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/x3kim/J1.Notes/releases) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org) [![Docker](https://img.shields.io/badge/Docker-ready-2496ED.svg)](https://hub.docker.com) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6.svg)](https://www.typescriptlang.org)
 
 ![J1.Notes Screenshot](images/screenshot.png)
