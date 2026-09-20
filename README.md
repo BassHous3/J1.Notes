@@ -124,8 +124,42 @@ All settings are passed as environment variables. Copy `.env.example` to `.env` 
 | `SMTP_FROM` | `J1.Notes <no-reply@j1notes.local>` | From address |
 | `NEXT_PUBLIC_GITHUB_URL` | `https://github.com/x3kim/J1.Notes` | GitHub link in footer |
 
-### Minimal production `.env`
+```yaml
+name: j1notes
+services:
+  j1notes:
+    image: basshous3/j1notes:latest
+    container_name: j1notes
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_PROVIDER=sqlite
+      - DATABASE_URL=file:/data/j1notes.db
+      - JWT_SECRET=YOUR_RANDOM_SECRET_HERE   # from: openssl rand -hex 32
+      - NODE_ENV=production
+      - LOGIN_MAX_ATTEMPTS=${LOGIN_MAX_ATTEMPTS:-0}
+      - LOGIN_LOCKOUT_MINUTES=${LOGIN_LOCKOUT_MINUTES:-5}
+      - LOGIN_TRUST_PROXY=${LOGIN_TRUST_PROXY:-false}
+    volumes:
+      - /DATA/AppData/j1notes/data:/data
+      - /DATA/AppData/j1notes/uploads:/app/public/uploads
 
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: j1notes
+  icon: https://raw.githubusercontent.com/x3kim/J1.Notes/73cce8320ecc81a59cf40fefbb1221fa6ec6549e/public/icons/icon.svg
+  title:
+    en_us: J1.Notes
+  description:
+    en_us: Self-hosted, privacy-first notes app.
+  port_map: "3000"
+  index: /12
+  ```
+
+### Minimal production `.env`
 ```env
 JWT_SECRET=your-very-long-random-secret-here
 DATABASE_URL=file:/data/j1notes.db
