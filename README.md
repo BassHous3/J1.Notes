@@ -6,10 +6,10 @@
 
 **Self-hosted, privacy-first notes — your data, your server.**
 
-**This is a fork from the epic-one-for-all https://github.com/x3kim/J1.Notes.git**
+**This is a fork from the epic https://github.com/x3kim/J1.Notes.git**
 
-**This fork is intended to simplify installation with a single docker image and giving the possibility to expose the UI without comprimising security**
-**The plan is to eventually marge with the OG if such opportunity is available. It is important to know that this for is VIBECODED.**
+**This fork is intended to simplify installation with a single docker image and giving the possibility to expose the UI without comprimising security.**
+**The plan is to eventually marge with the OG if such opportunity is available. It is important to know that this project is VIBECODED.**
 </div>
 
 <div align="center">
