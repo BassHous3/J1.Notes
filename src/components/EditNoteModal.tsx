@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Plus, Trash2, RotateCcw, History, Pencil, ChevronDown, Users } from 'lucide-react';
+import { X, Plus, Trash2, RotateCcw, History, Pencil, ChevronDown, Users, Check } from 'lucide-react';
 import NoteActionBar from './NoteActionBar';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -501,7 +501,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                     </button>
                   </div>
                 </div>
-                <div className="flex-1 overflow-y-auto rounded-lg font-mono text-xs" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                <div className="flex-1 overflow-y-auto rounded-lg font-mono text-xs custom-scrollbar" style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
                   {(() => {
                     try {
                       const snap = JSON.parse(diffVersion.snapshot);
@@ -530,7 +530,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                 </div>
               </div>
             ) : (
-              <div className="overflow-y-auto space-y-3 pr-1 flex-1">
+              <div className="overflow-y-auto space-y-3 pr-1 flex-1 custom-scrollbar">
                 {versions.length === 0 ? (
                   <p className="text-center py-8" style={{ color: 'var(--theme-text-muted)' }}>{t('notes:versions.none')}</p>
                 ) : versions.map((v: any, idx: number) => (
@@ -617,191 +617,199 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
       {/* Main modal */}
       <div
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] rounded-xl shadow-2xl border flex flex-col relative overflow-y-auto"
+        className="w-full max-w-2xl max-h-[90dvh] sm:max-h-[85dvh] rounded-xl shadow-2xl border flex flex-col relative overflow-hidden"
         style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-text)', ...modalBgStyle }}
       >
-        {/* Attachment images */}
-        {attachments.length > 0 && (
-          <div className="flex flex-wrap rounded-t-xl overflow-hidden">
-            {attachments.map((url, i) => (
-              <div key={i} className="relative w-full bg-black/10 group/att">
-                <img src={url} alt="" className="w-full h-auto block" />
-                {!isTrash && (
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    {isDrawingUrl(url) && (
-                      <button
-                        onClick={() => setEditingDrawingUrl(url)}
-                        className="p-1 bg-black/50 hover:bg-black text-white rounded-full"
-                        title="Zeichnung bearbeiten"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => {
-                        fetch(`/api/upload?file=${encodeURIComponent(url)}`, { method: 'DELETE' });
-                        setAttachments(prev => prev.filter((_, idx) => idx !== i));
-                      }}
-                      className="p-1 bg-black/50 hover:bg-black text-white rounded-full"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Fixed header: title + formatting toolbar */}
+        <div className="shrink-0">
+          <input
+            disabled={isTrash}
+            type="text"
+            placeholder={t('notes:placeholders.title')}
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            className="w-full bg-transparent p-4 pb-2 outline-none font-semibold text-xl placeholder-gray-500"
+            style={{ color: 'var(--theme-text)' }}
+          />
 
-        {/* Presence bar — shown when other users are active */}
-        {otherUsers.length > 0 && (
-          <div
-            className="flex items-center gap-2 px-4 py-1.5 border-b text-xs"
-            style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-text-muted)' }}
-          >
-            <Users size={12} />
-            <div className="flex -space-x-1">
-              {otherUsers.slice(0, 5).map((u, i) => (
-                <div
-                  key={i}
-                  title={u.name}
-                  className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2"
-                  style={{ backgroundColor: u.color, borderColor: 'var(--theme-surface)' }}
-                >
-                  {(u.name || '?')[0].toUpperCase()}
-                </div>
-              ))}
-            </div>
-            <span>
-              {otherUsers.length === 1
-                ? `${otherUsers[0].name} bearbeitet gerade mit`
-                : `${otherUsers.length} Nutzer bearbeiten gerade mit`}
-            </span>
-            <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          </div>
-        )}
-
-        {/* Title */}
-        <input
-          disabled={isTrash}
-          type="text"
-          placeholder={t('notes:placeholders.title')}
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className="w-full bg-transparent p-4 pb-2 outline-none font-semibold text-xl placeholder-gray-500 rounded-t-xl"
-          style={{ color: 'var(--theme-text)' }}
-        />
-
-        {/* Loading state while Y.js syncs */}
-        {!hasSynced ? (
-          <div className="p-4 min-h-[120px] flex items-center justify-center">
-            <span className="text-sm animate-pulse" style={{ color: 'var(--theme-text-muted)' }}>
-              Verbinde…
-            </span>
-          </div>
-        ) : (
-          <>
-            {/* Editor toolbar (hidden in list mode) */}
-            {modalEditor && !isTrash && !isListMode && (
-              <EditorToolbar editor={modalEditor} />
-            )}
-
-            {/* Tiptap editor — handles both rich text AND TaskList */}
-            <EditorContent editor={modalEditor} />
-
-            {/* "Add item" button in list mode */}
-            {isListMode && !isTrash && (
-              <div className="px-4 pb-2">
-                <button
-                  onClick={addChecklistItem}
-                  className="flex items-center gap-2 text-sm px-1 py-1"
-                  style={{ color: 'var(--theme-text-muted)' }}
-                >
-                  <Plus size={16} /> {t('notes:placeholders.addListItem')}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Label chips */}
-        {selectedLabels.length > 0 && (
-          <div className="px-4 pb-2 flex flex-wrap gap-2">
-            {selectedLabels.map(id => {
-              const l = availableLabels.find((al: any) => al.id === id);
-              return l ? (
-                <span
-                  key={id}
-                  className="text-xs px-2 py-1 rounded-full flex items-center gap-1"
-                  style={{ backgroundColor: 'var(--theme-hover)', color: 'var(--theme-text)' }}
-                >
-                  {l.name} <X size={12} className="cursor-pointer" onClick={() => toggleLabel(id)} />
-                </span>
-              ) : null;
-            })}
-          </div>
-        )}
-
-        {/* Status bar */}
-        <div className="px-4 py-2 text-xs flex justify-center items-center gap-2" style={{ color: 'var(--theme-text-subtle)' }}>
-          {isTrash ? t('notes:statuses.inTrash') : isArchive ? t('notes:statuses.inArchive') : ''}
-          {' '}{t('notes:statuses.editedAt', { date: new Date(note.updated_at).toLocaleString(i18n.language) })}
-          {!isTrash && (
-            <button onClick={fetchVersions} className="hover:text-blue-400 underline ml-2" title={t('notes:tooltips.viewHistory')}>
-              {t('notes:statuses.history')}
-            </button>
-          )}
-          {collabOffline && (
-            <span className="ml-2 text-yellow-500/70" title="Kollaborations-Server nicht erreichbar">
-              ● Offline
-            </span>
+          {/* Editor toolbar (hidden in list mode, and while Y.js is still syncing) */}
+          {hasSynced && modalEditor && !isTrash && !isListMode && (
+            <EditorToolbar editor={modalEditor} />
           )}
         </div>
 
-        {/* Action bar */}
-        <div className="flex justify-between items-center p-3 rounded-b-xl">
-          <div className="flex gap-1 relative">
-            {isTrash ? (
-              <>
-                <ModalIconBtn onClick={() => { onDelete(note.id, true); onClose(); }} className="text-red-500"><Trash2 size={18} /></ModalIconBtn>
-                <ModalIconBtn onClick={() => { onUpdate(note.id, { deleted_at: null }); onClose(); }} className="text-blue-500"><RotateCcw size={18} /></ModalIconBtn>
-              </>
-            ) : (
-              <NoteActionBar
-                selectedColor={selectedColor}
-                selectedBgImage={selectedBgImage}
-                onColorChange={setSelectedColor}
-                onBgImageChange={setSelectedBgImage}
-                isListMode={isListMode}
-                onToggleListMode={toggleListMode}
-                availableLabels={availableLabels}
-                selectedLabels={selectedLabels}
-                onToggleLabel={toggleLabel}
-                onAttachImage={async (file) => {
-                  const formData = new FormData();
-                  formData.append('file', file);
-                  const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                  if (res.ok) { const { url } = await res.json(); setAttachments(prev => [...prev, url]); }
-                }}
-                onDraw={() => setShowDrawingModal(true)}
-                reminderAt={reminderAt}
-                onReminderChange={setReminderAt}
-                onDuplicate={() => { onDuplicate(note); onClose(); }}
-                onArchive={() => { onUpdate(note.id, { archived: !note.archived, pinned: false }); onClose(); }}
-                onExport={handleExport}
-              />
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+          {/* Attachment images */}
+          {attachments.length > 0 && (
+            <div className="flex flex-wrap overflow-hidden">
+              {attachments.map((url, i) => (
+                <div key={i} className="relative w-full bg-black/10 group/att">
+                  <img src={url} alt="" className="w-full h-auto block" />
+                  {!isTrash && (
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      {isDrawingUrl(url) && (
+                        <button
+                          onClick={() => setEditingDrawingUrl(url)}
+                          className="p-1 bg-black/50 hover:bg-black text-white rounded-full"
+                          title="Zeichnung bearbeiten"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          fetch(`/api/upload?file=${encodeURIComponent(url)}`, { method: 'DELETE' });
+                          setAttachments(prev => prev.filter((_, idx) => idx !== i));
+                        }}
+                        className="p-1 bg-black/50 hover:bg-black text-white rounded-full"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Presence bar — shown when other users are active */}
+          {otherUsers.length > 0 && (
+            <div
+              className="flex items-center gap-2 px-4 py-1.5 border-b text-xs"
+              style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-text-muted)' }}
+            >
+              <Users size={12} />
+              <div className="flex -space-x-1">
+                {otherUsers.slice(0, 5).map((u, i) => (
+                  <div
+                    key={i}
+                    title={u.name}
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2"
+                    style={{ backgroundColor: u.color, borderColor: 'var(--theme-surface)' }}
+                  >
+                    {(u.name || '?')[0].toUpperCase()}
+                  </div>
+                ))}
+              </div>
+              <span>
+                {otherUsers.length === 1
+                  ? t('notes:collaboration.editingWithOne', { name: otherUsers[0].name })
+                  : t('notes:collaboration.editingWithMany', { count: otherUsers.length })}
+              </span>
+              <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            </div>
+          )}
+
+          {/* Loading state while Y.js syncs */}
+          {!hasSynced ? (
+            <div className="p-4 min-h-[120px] flex items-center justify-center">
+              <span className="text-sm animate-pulse" style={{ color: 'var(--theme-text-muted)' }}>
+                {t('notes:statuses.connecting')}
+              </span>
+            </div>
+          ) : (
+            <>
+              {/* Tiptap editor — handles both rich text AND TaskList */}
+              <EditorContent editor={modalEditor} />
+
+              {/* "Add item" button in list mode */}
+              {isListMode && !isTrash && (
+                <div className="px-4 pb-2">
+                  <button
+                    onClick={addChecklistItem}
+                    className="flex items-center gap-2 text-sm px-1 py-1"
+                    style={{ color: 'var(--theme-text-muted)' }}
+                  >
+                    <Plus size={16} /> {t('notes:placeholders.addListItem')}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Label chips */}
+          {selectedLabels.length > 0 && (
+            <div className="px-4 pb-2 flex flex-wrap gap-2">
+              {selectedLabels.map(id => {
+                const l = availableLabels.find((al: any) => al.id === id);
+                return l ? (
+                  <span
+                    key={id}
+                    className="text-xs px-2 py-1 rounded-full flex items-center gap-1"
+                    style={{ backgroundColor: 'var(--theme-hover)', color: 'var(--theme-text)' }}
+                  >
+                    {l.name} <X size={12} className="cursor-pointer" onClick={() => toggleLabel(id)} />
+                  </span>
+                ) : null;
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Fixed footer: status bar + action bar */}
+        <div className="shrink-0">
+          {/* Status bar */}
+          <div className="px-4 py-2 text-xs flex justify-center items-center gap-2 border-t" style={{ color: 'var(--theme-text-subtle)', borderColor: 'var(--theme-border)' }}>
+            {isTrash ? t('notes:statuses.inTrash') : isArchive ? t('notes:statuses.inArchive') : ''}
+            {' '}{t('notes:statuses.editedAt', { date: new Date(note.updated_at).toLocaleString(i18n.language) })}
+            {!isTrash && (
+              <button onClick={fetchVersions} className="hover:text-blue-400 underline ml-2" title={t('notes:tooltips.viewHistory')}>
+                {t('notes:statuses.history')}
+              </button>
+            )}
+            {collabOffline && (
+              <span className="ml-2 text-yellow-500/70" title={t('notes:collaboration.offlineTooltip')}>
+                ● Offline
+              </span>
             )}
           </div>
 
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 rounded font-medium transition-colors"
-            style={{ color: 'var(--theme-text)' }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--theme-hover)')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-          >
-            {t('common:actions.close')}
-          </button>
+          {/* Action bar */}
+          <div className="flex justify-between items-center p-3 gap-2">
+            <div className="flex gap-1 relative min-w-0 overflow-x-auto">
+              {isTrash ? (
+                <>
+                  <ModalIconBtn onClick={() => { onDelete(note.id, true); onClose(); }} className="text-red-500"><Trash2 size={18} /></ModalIconBtn>
+                  <ModalIconBtn onClick={() => { onUpdate(note.id, { deleted_at: null }); onClose(); }} className="text-blue-500"><RotateCcw size={18} /></ModalIconBtn>
+                </>
+              ) : (
+                <NoteActionBar
+                  compact
+                  selectedColor={selectedColor}
+                  selectedBgImage={selectedBgImage}
+                  onColorChange={setSelectedColor}
+                  onBgImageChange={setSelectedBgImage}
+                  isListMode={isListMode}
+                  onToggleListMode={toggleListMode}
+                  availableLabels={availableLabels}
+                  selectedLabels={selectedLabels}
+                  onToggleLabel={toggleLabel}
+                  onAttachImage={async (file) => {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                    if (res.ok) { const { url } = await res.json(); setAttachments(prev => [...prev, url]); }
+                  }}
+                  onDraw={() => setShowDrawingModal(true)}
+                  reminderAt={reminderAt}
+                  onReminderChange={setReminderAt}
+                  onDuplicate={() => { onDuplicate(note); onClose(); }}
+                  onArchive={() => { onUpdate(note.id, { archived: !note.archived, pinned: false }); onClose(); }}
+                  onExport={handleExport}
+                />
+              )}
+            </div>
+
+            <button
+              onClick={handleSave}
+              title={t('common:actions.close')}
+              className="w-9 h-9 shrink-0 rounded-lg flex items-center justify-center font-bold transition-transform hover:scale-105"
+              style={{ backgroundColor: 'var(--theme-accent)', color: '#000' }}
+            >
+              <Check size={18} strokeWidth={3} />
+            </button>
+          </div>
         </div>
       </div>
 

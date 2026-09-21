@@ -64,8 +64,9 @@ export interface NoteActionBarProps {
   iconSize?: number;
 
   /**
-   * Compact mode: when true the bar shows only the 3 primary icons
-   * (palette, labels, attach) and a "..." overflow button for the rest.
+   * Compact mode: when true the bar shows only the 4 primary icons
+   * (palette, list/text mode, labels, attach) and a "..." overflow button
+   * for the rest (draw, reminder, duplicate, archive, export).
    */
   compact?: boolean;
 
@@ -300,6 +301,21 @@ export default function NoteActionBar({
             <Pencil size={iconSize} />
           </Btn>
         )}
+        {onReminderChange && (
+          <div ref={reminderRef} className="relative">
+            <Btn
+              onClick={e => { e.stopPropagation(); setShowReminder(r => !r); setShowPalette(false); setShowLabels(false); }}
+              title={t('notes:reminders.title')}
+              active={!!reminderAt}
+            >
+              <Bell size={iconSize} />
+            </Btn>
+            {!!reminderAt && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--theme-accent)' }} />
+            )}
+            {showReminder && <ReminderPanel />}
+          </div>
+        )}
         {onDuplicate && (
           <Btn onClick={e => { e.stopPropagation(); setShowMore(false); onDuplicate(); }} title={t('notes:tooltips.duplicate')}>
             <Copy size={iconSize} />
@@ -336,7 +352,7 @@ export default function NoteActionBar({
     <>
       {/* Palette */}
       <div ref={paletteRef} className="relative">
-        <Btn onClick={e => { e.stopPropagation(); setShowPalette(p => !p); setShowLabels(false); setShowReminder(false); setShowMore(false); }}>
+        <Btn onClick={e => { e.stopPropagation(); setShowPalette(p => !p); setShowLabels(false); setShowMore(false); }}>
           <Palette size={iconSize} />
         </Btn>
         {showPalette && <PalettePanel />}
@@ -352,7 +368,7 @@ export default function NoteActionBar({
 
       {/* Labels */}
       <div ref={labelRef} className="relative">
-        <Btn onClick={e => { e.stopPropagation(); setShowLabels(l => !l); setShowPalette(false); setShowReminder(false); setShowMore(false); }}>
+        <Btn onClick={e => { e.stopPropagation(); setShowLabels(l => !l); setShowPalette(false); setShowMore(false); }}>
           <Tag size={iconSize} />
         </Btn>
         {showLabels && <LabelsPanel />}
@@ -364,23 +380,6 @@ export default function NoteActionBar({
           <ImageIcon size={iconSize} />
         </Btn>
       )}
-
-      {/* Reminder */}
-      {onReminderChange && (
-        <div ref={reminderRef} className="relative">
-          <Btn
-            onClick={e => { e.stopPropagation(); setShowReminder(r => !r); setShowPalette(false); setShowLabels(false); setShowMore(false); }}
-            title={t('notes:reminders.title')}
-            active={!!reminderAt}
-          >
-            <Bell size={iconSize} />
-          </Btn>
-          {!!reminderAt && (
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--theme-accent)' }} />
-          )}
-          {showReminder && <ReminderPanel />}
-        </div>
-      )}
     </>
   );
 
@@ -390,11 +389,15 @@ export default function NoteActionBar({
         {primaryIcons}
         <div ref={moreRef} className="relative">
           <Btn
-            onClick={e => { e.stopPropagation(); setShowMore(m => !m); setShowPalette(false); setShowLabels(false); setShowReminder(false); }}
+            onClick={e => { e.stopPropagation(); setShowMore(m => !m); setShowPalette(false); setShowLabels(false); }}
             title={t('common:actions.more')}
+            active={!!reminderAt}
           >
             <MoreHorizontal size={iconSize} />
           </Btn>
+          {!!reminderAt && (
+            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--theme-accent)' }} />
+          )}
           {showMore && <SecondaryActions asDropdown />}
         </div>
         <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleAttachFile} />

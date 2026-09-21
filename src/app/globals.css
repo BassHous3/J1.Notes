@@ -172,6 +172,28 @@ body {
   margin: 0;
 }
 
+/* ─── Custom scrollbar ──────────────────────────────────────────────────────── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--theme-border) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--theme-border);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--theme-border-strong);
+}
+
 /* ─── Theme transition ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
   transition-property: background-color, border-color, color;
