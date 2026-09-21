@@ -617,7 +617,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
       {/* Main modal */}
       <div
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-2xl rounded-xl shadow-2xl border flex flex-col relative"
+        className="w-full max-w-2xl max-h-[90vh] sm:max-h-[85vh] rounded-xl shadow-2xl border flex flex-col relative overflow-y-auto"
         style={{ borderColor: 'var(--theme-border)', color: 'var(--theme-text)', ...modalBgStyle }}
       >
         {/* Attachment images */}

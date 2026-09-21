@@ -21,7 +21,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingNote, setEditingNote] = useState<any>(null);
   const [showLabelEditModal, setShowLabelEditModal] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState('notes');
   const [showSettings, setShowSettings] = useState(false);
   const [showAuthSettings, setShowAuthSettings] = useState(false);
