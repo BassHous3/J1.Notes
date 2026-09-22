@@ -20,6 +20,7 @@ import { HocuspocusProvider } from '@hocuspocus/provider';
 import * as Y from 'yjs';
 import EditorToolbar from './EditorToolbar';
 import dynamic from 'next/dynamic';
+import { useIsSmallScreen } from '@/lib/useIsSmallScreen';
 
 const DrawingModal = dynamic(() => import('./DrawingModal'), { ssr: false });
 
@@ -97,6 +98,7 @@ function getInitialContent(note: any): string {
 
 export default function EditNoteModal({ note, availableLabels = [], onClose, onSave, onUpdate, onDelete, onDuplicate }: any) {
   const { t, i18n } = useTranslation(['notes', 'common']);
+  const isSmallScreen = useIsSmallScreen();
   const [title, setTitle] = useState(note.title || '');
   const [selectedColor, setSelectedColor] = useState(note.color || '');
   const [isListMode, setIsListMode] = useState(note.checklist_items?.length > 0);
@@ -767,7 +769,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
 
           {/* Action bar */}
           <div className="flex justify-between items-center p-3 gap-2">
-            <div className="flex gap-1 relative min-w-0 overflow-x-auto">
+            <div className="flex gap-1 relative">
               {isTrash ? (
                 <>
                   <ModalIconBtn onClick={() => { onDelete(note.id, true); onClose(); }} className="text-red-500"><Trash2 size={18} /></ModalIconBtn>
@@ -775,7 +777,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                 </>
               ) : (
                 <NoteActionBar
-                  compact
+                  compact={isSmallScreen}
                   selectedColor={selectedColor}
                   selectedBgImage={selectedBgImage}
                   onColorChange={setSelectedColor}
