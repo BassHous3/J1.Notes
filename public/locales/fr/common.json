@@ -19,7 +19,8 @@
     "search": "Rechercher",
     "saving": "Enregistrement...",
     "savingAsNote": "Enregistrement comme note...",
-    "back": "Retour"
+    "back": "Retour",
+    "undo": "Annuler"
   },
   "navigation": {
     "notes": "Notes",

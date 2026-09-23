@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Palette, ListTodo, Type, Tag, Image as ImageIcon, Pencil, Bell,
-  Copy, Archive, Download, X, Plus, MoreHorizontal,
+  Copy, Archive, Trash2, Download, X, Plus, MoreHorizontal,
 } from 'lucide-react';
 
 const COLORS = ['#f28b82', '#fbbc04', '#fff475', '#ccff90', '#a7ffeb', '#cbf0f8', '#aecbfa', '#d7aefb', '#fdcfe8', '#e6c9a8', '#e8eaed'];
@@ -57,6 +57,8 @@ export interface NoteActionBarProps {
   onDuplicate?: () => void;
   /** Optional: Archive/Unarchive */
   onArchive?: () => void;
+  /** Optional: Move to trash */
+  onDelete?: () => void;
   /** Optional: Export */
   onExport?: () => void;
 
@@ -64,9 +66,9 @@ export interface NoteActionBarProps {
   iconSize?: number;
 
   /**
-   * Compact mode: when true the bar shows only the 4 primary icons
-   * (palette, list/text mode, labels, attach) and a "..." overflow button
-   * for the rest (draw, reminder, duplicate, archive, export).
+   * Compact mode: when true the bar shows only the 5 primary icons
+   * (palette, list/text mode, labels, attach, archive) and a "..." overflow
+   * button for the rest (draw, reminder, duplicate, delete, export).
    */
   compact?: boolean;
 
@@ -90,6 +92,7 @@ export default function NoteActionBar({
   onReminderChange,
   onDuplicate,
   onArchive,
+  onDelete,
   onExport,
   iconSize = 18,
   compact = false,
@@ -321,9 +324,9 @@ export default function NoteActionBar({
             <Copy size={iconSize} />
           </Btn>
         )}
-        {onArchive && (
-          <Btn onClick={e => { e.stopPropagation(); setShowMore(false); onArchive(); }} title={t('notes:tooltips.archive')}>
-            <Archive size={iconSize} />
+        {onDelete && (
+          <Btn onClick={e => { e.stopPropagation(); setShowMore(false); onDelete(); }} title={t('notes:tooltips.delete')}>
+            <Trash2 size={iconSize} />
           </Btn>
         )}
         {onExport && (
@@ -378,6 +381,13 @@ export default function NoteActionBar({
       {onAttachImage && (
         <Btn onClick={e => { e.stopPropagation(); fileInputRef.current?.click(); }} title={t('notes:tooltips.addImage')}>
           <ImageIcon size={iconSize} />
+        </Btn>
+      )}
+
+      {/* Archive/Unarchive — kept always visible, there's room for it */}
+      {onArchive && (
+        <Btn onClick={e => { e.stopPropagation(); onArchive(); }} title={t('notes:tooltips.archive')}>
+          <Archive size={iconSize} />
         </Btn>
       )}
     </>

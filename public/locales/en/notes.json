@@ -41,7 +41,8 @@
     "heading": "Heading",
     "textColor": "Text color",
     "highlight": "Highlight",
-    "clearFormatting": "Clear formatting"
+    "clearFormatting": "Clear formatting",
+    "moreFormatting": "More formatting"
   },
   "labels": {
     "editTitle": "Edit labels",
@@ -62,10 +63,11 @@
     "savingDrawingError": "Error saving drawing"
   },
   "statuses": {
-    "inTrash": "Note in trash \u2022 ",
-    "inArchive": "Note in archive \u2022 ",
+    "inTrash": "Note in trash • ",
+    "inArchive": "Note in archive • ",
     "editedAt": "Edited: {{date}}",
-    "history": "History"
+    "history": "History",
+    "connecting": "Loading…"
   },
   "versions": {
     "title": "Version history",
@@ -99,5 +101,10 @@
   },
   "checklist": {
     "completedItems": "completed"
+  },
+  "collaboration": {
+    "editingWithOne": "{{name}} is editing with you",
+    "editingWithMany": "{{count}} people are editing with you",
+    "offlineTooltip": "Collaboration server unreachable"
   }
 }

@@ -6,21 +6,22 @@
   "actions": {
     "save": "Speichern",
     "cancel": "Abbrechen",
-    "close": "Schlie\u00dfen",
-    "delete": "L\u00f6schen",
+    "close": "Schließen",
+    "delete": "Löschen",
     "duplicate": "Duplizieren",
     "archive": "Archivieren",
     "restore": "Wiederherstellen",
     "edit": "Bearbeiten",
     "done": "Fertig",
     "ok": "OK",
-    "open": "\u00d6ffnen",
+    "open": "Öffnen",
     "refresh": "Aktualisieren",
     "search": "Suchen",
     "saving": "Wird gespeichert...",
     "savingAsNote": "Wird als Notiz gespeichert...",
     "back": "Zurück",
-    "more": "Weitere Aktionen"
+    "more": "Weitere Aktionen",
+    "undo": "Rückgängig"
   },
   "navigation": {
     "notes": "Notizen",

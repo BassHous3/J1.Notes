@@ -41,7 +41,8 @@
     "heading": "Überschrift",
     "textColor": "Textfarbe",
     "highlight": "Hervorheben",
-    "clearFormatting": "Formatierung entfernen"
+    "clearFormatting": "Formatierung entfernen",
+    "moreFormatting": "Weitere Formatierung"
   },
   "labels": {
     "editTitle": "Labels bearbeiten",
@@ -65,7 +66,8 @@
     "inTrash": "Notiz im Papierkorb • ",
     "inArchive": "Notiz im Archiv • ",
     "editedAt": "Bearbeitet: {{date}}",
-    "history": "Historie"
+    "history": "Historie",
+    "connecting": "Verbinde…"
   },
   "versions": {
     "title": "Versionsverlauf",
@@ -99,5 +101,10 @@
   },
   "checklist": {
     "completedItems": "abgeschlossen"
+  },
+  "collaboration": {
+    "editingWithOne": "{{name}} bearbeitet gerade mit",
+    "editingWithMany": "{{count}} Nutzer bearbeiten gerade mit",
+    "offlineTooltip": "Kollaborations-Server nicht erreichbar"
   }
 }

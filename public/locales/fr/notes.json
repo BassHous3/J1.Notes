@@ -41,7 +41,8 @@
     "heading": "Titre",
     "textColor": "Couleur du texte",
     "highlight": "Surligner",
-    "clearFormatting": "Effacer la mise en forme"
+    "clearFormatting": "Effacer la mise en forme",
+    "moreFormatting": "Plus de mise en forme"
   },
   "labels": {
     "editTitle": "Modifier les étiquettes",
@@ -65,7 +66,8 @@
     "inTrash": "Note dans la corbeille • ",
     "inArchive": "Note dans l'archive • ",
     "editedAt": "Modifié : {{date}}",
-    "history": "Historique"
+    "history": "Historique",
+    "connecting": "Connexion…"
   },
   "versions": {
     "title": "Historique des versions",
@@ -99,5 +101,10 @@
   },
   "checklist": {
     "completedItems": "terminé(s)"
+  },
+  "collaboration": {
+    "editingWithOne": "{{name}} modifie ce document avec vous",
+    "editingWithMany": "{{count}} personnes modifient ce document avec vous",
+    "offlineTooltip": "Serveur de collaboration injoignable"
   }
 }

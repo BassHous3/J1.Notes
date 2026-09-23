@@ -20,7 +20,8 @@
     "saving": "Saving...",
     "savingAsNote": "Saving as note...",
     "back": "Back",
-    "more": "More actions"
+    "more": "More actions",
+    "undo": "Undo"
   },
   "navigation": {
     "notes": "Notes",

@@ -798,6 +798,7 @@ export default function EditNoteModal({ note, availableLabels = [], onClose, onS
                   onReminderChange={setReminderAt}
                   onDuplicate={() => { onDuplicate(note); onClose(); }}
                   onArchive={() => { onUpdate(note.id, { archived: !note.archived, pinned: false }); onClose(); }}
+                  onDelete={() => { onDelete(note.id); onClose(); }}
                   onExport={handleExport}
                 />
               )}
