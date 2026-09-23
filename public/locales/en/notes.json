@@ -97,7 +97,8 @@
     "deleted": "Note deleted",
     "deleteError": "Error deleting",
     "saveError": "Error saving",
-    "duplicated": "Note duplicated"
+    "duplicated": "Note duplicated",
+    "archived": "Note archived"
   },
   "checklist": {
     "completedItems": "completed"
